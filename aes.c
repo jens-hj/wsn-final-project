@@ -4,6 +4,7 @@
 #include "lib/aes-128.h"
 #include "dev/radio.h"
 #include "cc2420.h"
+#include "sys/energest.h"
 #include <stdio.h>
 
 PROCESS(aes_process, "aes process");
@@ -11,6 +12,7 @@ AUTOSTART_PROCESSES(&aes_process);
 
 PROCESS_THREAD(aes_process, ev, data) {
   PROCESS_BEGIN();
+  energest_init();
   cc2420_init();
   cc2420_on();
 
@@ -53,6 +55,8 @@ PROCESS_THREAD(aes_process, ev, data) {
   // printf("\n");
 
   cc2420_off();
+  printf("Energest ticks per second: %lu", ENERGEST_SECOND);
+  energest_flush();
   
   PROCESS_END();
 }
