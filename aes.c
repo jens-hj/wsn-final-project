@@ -13,26 +13,16 @@ AUTOSTART_PROCESSES(&aes_process);
 PROCESS_THREAD(aes_process, ev, data) {
   PROCESS_BEGIN();
   energest_init();
+
   cc2420_init();
   cc2420_on();
 
   // sequence to be encrypted
   unsigned char plaintext[AES_128_BLOCK_SIZE] = "this is a test 1";
-  // char* str = "This is a test";
-
-  // for (int i = 0; i < 16; i++) {
-  //   printf("%d ", (char)plaintext[i]);
-  // }
-  // printf("\n");
   printf("plaintext: %s\n", plaintext);
 
   // 128 bit key
-  // user defined key
-  // int key_length = 16;
   uint8_t key[AES_128_KEY_LENGTH] = {5, 0, 7, 6, 9, 9, 6, 2, 9, 1, 3, 8, 6, 8, 4, 0};
-
-  // cc2420_aes_set_key(key, 0);
-  // cc2420_aes_cipher(plaintext, N, 0);
 
   AES_128.set_key(key);
   AES_128.encrypt(plaintext);
@@ -48,14 +38,10 @@ PROCESS_THREAD(aes_process, ev, data) {
   AES_128.encrypt(plaintext);
   printf("decrypted: %s\n", plaintext);
 
-  // print decrypted
-  // for (int i = 0; i < 16; i++) {
-  // printf("%c ", (char)plaintext[i]);
-  // }
-  // printf("\n");
-
   cc2420_off();
-  printf("Energest ticks per second: %lu", ENERGEST_SECOND);
+  // print the ticks per second for energest and statistics
+  // slide 31-32, lecture 2
+  printf("Energest ticks per second: %d", ENERGEST_SECOND);
   energest_flush();
   
   PROCESS_END();
