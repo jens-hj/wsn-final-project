@@ -1,4 +1,4 @@
-CONTIKI_PROJECT = aes
+CONTIKI_PROJECT = client
 all: $(CONTIKI_PROJECT)
 
 # Add library flags
