@@ -82,7 +82,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
       LOG_INFO_6ADDR(&dest_ipaddr);
       LOG_INFO_("\n");
       //snprintf(str, sizeof(str), "hello %" PRIu32 "", tx_count);
-      snprintf(str, sizeof(str), message, tx_count);
+      snprintf(str, sizeof(str), "%" PRIu32 "", message);
       simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
       tx_count++;
     } else {
