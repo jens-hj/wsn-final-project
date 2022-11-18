@@ -58,7 +58,7 @@ PROCESS_THREAD(aes_process, ev, data) {
   // unsigned long int current_time = energest_type_time(ENERGEST_TYPE_MAX);
   
   // print
-  LOG_INFO("CPU time: %lu\n", cpu_time);
+  LOG_INFO("ENERGEST: CPU time: %lu\n", cpu_time);
   LOG_INFO("LPM time: %lu\n", lpm_time);
   LOG_INFO("Deep LPM time: %lu\n", deep_lpm_time);
   LOG_INFO("RX time: %lu\n", rx_time);
