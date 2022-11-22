@@ -90,8 +90,8 @@ PROCESS_THREAD(udp_client_process, ev, data)
         light_data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
       }
 
+      LOG_INFO_("Light Sensor Data: ");
       for (int i = 0; i < AES_128_BLOCK_SIZE; i++) {
-        LOG_INFO_("Light Sensor Data: ");
         LOG_INFO_("%d ", light_data[i]);
       }
       LOG_INFO_("\n");
