@@ -24,7 +24,7 @@
 static struct simple_udp_connection udp_conn;
 static uint32_t rx_count = 0;
 
-unsigned char message[AES_128_BLOCK_SIZE] = "this is a test 1";
+char message[AES_128_BLOCK_SIZE] = "this is a test 1";
 uint8_t key[AES_128_KEY_LENGTH] = {5, 0, 7, 6, 9, 9, 6, 2, 9, 1, 3, 8, 6, 8, 4, 0};
 
 //char* message = "d9 c9 20 63 38 d5 22 28 7c 2c 12 ec 5a 64 8d d8";
