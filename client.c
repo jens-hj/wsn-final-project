@@ -10,7 +10,7 @@
 #include "lib/aes-128.h"
 #include "dev/radio.h"
 #include "cc2420.h"
-#include "dev/sht11/light-sensor.h"
+#include "dev/light-sensor.h"
 
 #include "sys/log.h"
 #define LOG_MODULE "App"
