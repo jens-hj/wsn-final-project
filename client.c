@@ -62,7 +62,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
   PROCESS_BEGIN();
 
-  etimer_ser(&timer, CLOCK_SECOND * 0.01);
+  etimer_set(&timer, CLOCK_SECOND * 0.01);
 
   AES_128.set_key(key);
 
