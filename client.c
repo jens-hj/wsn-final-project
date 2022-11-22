@@ -24,7 +24,7 @@
 static struct simple_udp_connection udp_conn;
 static uint32_t rx_count = 0;
 
-char message[AES_128_BLOCK_SIZE] = "this is a test 1";
+unsigned char message[AES_128_BLOCK_SIZE] = "this is a test 1";
 uint8_t key[AES_128_KEY_LENGTH] = {5, 0, 7, 6, 9, 9, 6, 2, 9, 1, 3, 8, 6, 8, 4, 0};
 
 //char* message = "d9 c9 20 63 38 d5 22 28 7c 2c 12 ec 5a 64 8d d8";
@@ -87,6 +87,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
       // THEN SEND THEM
       
       AES_128.encrypt(message);
+      message = (char*) message;
 
       /* Send to DAG root */
       LOG_INFO("Sending request %"PRIu32" to ", tx_count);
