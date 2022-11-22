@@ -94,9 +94,9 @@ PROCESS_THREAD(udp_client_process, ev, data)
       SENSORS_DEACTIVATE(light_sensor);
 
       LOG_INFO("Light Sensor Data: ");
-      for (int i = 0; i < AES_128_BLOCK_SIZE; i++) {
+      for (int j = 0; j < AES_128_BLOCK_SIZE; j++) {
 
-        LOG_INFO_("%d ", light_data[i]);
+        LOG_INFO_("%d ", light_data[j]);
       }
       LOG_INFO_("\n");
 
