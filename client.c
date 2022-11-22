@@ -27,7 +27,7 @@ static uint32_t rx_count = 0;
 
 //unsigned char message[AES_128_BLOCK_SIZE] = "this is a test 1";
 uint8_t key[AES_128_KEY_LENGTH] = {5, 0, 7, 6, 9, 9, 6, 2, 9, 1, 3, 8, 6, 8, 4, 0};
-int light_data[AES_128_BLOCK_SIZE];
+uint8_t light_data[AES_128_BLOCK_SIZE];
 
 //char* message = "d9 c9 20 63 38 d5 22 28 7c 2c 12 ec 5a 64 8d d8";
 
@@ -91,7 +91,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
       }
 
       for (int i = 0; i < AES_128_BLOCK_SIZE; i++) {
-        LOG_INFO_("Light Sensor Data: ")
+        LOG_INFO_("Light Sensor Data: ");
         LOG_INFO_("%d ", light_data[i]);
       }
       LOG_INFO_("\n");
