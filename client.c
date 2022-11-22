@@ -87,7 +87,6 @@ PROCESS_THREAD(udp_client_process, ev, data)
       // THEN SEND THEM
       
       AES_128.encrypt(message);
-      message = (char*) message;
 
       /* Send to DAG root */
       LOG_INFO("Sending request %"PRIu32" to ", tx_count);
