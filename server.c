@@ -55,6 +55,13 @@ udp_rx_callback(struct simple_udp_connection *c,
          uint16_t datalen)
 {
   LOG_INFO("Received request '%.*s' from ", datalen, (char *) data);
+
+  // PRINTING DATA IN HEX
+  for (int i = 0; i < datalen; i++) {
+    printf("%02x ", data[i]);
+  }
+  printf("\n");
+
   LOG_INFO_6ADDR(sender_addr);
   LOG_INFO_("\n");
 #if WITH_SERVER_REPLY

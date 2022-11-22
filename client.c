@@ -20,8 +20,10 @@
 static struct simple_udp_connection udp_conn;
 static uint32_t rx_count = 0;
 
+unsigned char message[AES_128_BLOCK_SIZE] = "this is a test 1";
+uint8_t key[AES_128_KEY_LENGTH] = {5, 0, 7, 6, 9, 9, 6, 2, 9, 1, 3, 8, 6, 8, 4, 0};
 
-char* message = "d9 c9 20 63 38 d5 22 28 7c 2c 12 ec 5a 64 8d d8";
+//char* message = "d9 c9 20 63 38 d5 22 28 7c 2c 12 ec 5a 64 8d d8";
 
 /*---------------------------------------------------------------------------*/
 PROCESS(udp_client_process, "UDP client");
@@ -56,6 +58,10 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
   PROCESS_BEGIN();
 
+  cc2420_init();
+  cc2420_on(); // MAYBE TURN OFF AND ON WILL SAVE POWER
+  AES_128.set_key(key);
+
   /* Initialize UDP connection */
   simple_udp_register(&udp_conn, UDP_CLIENT_PORT, NULL,
                       UDP_SERVER_PORT, udp_rx_callback);
@@ -75,7 +81,8 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
       // GET BLOCK OF 16 (32 characters) FROM TXT FILE AND ENCRYPT THEM
       // THEN SEND THEM
-
+      
+      AES_128.encrypt(message);
 
       /* Send to DAG root */
       LOG_INFO("Sending request %"PRIu32" to ", tx_count);
@@ -97,6 +104,8 @@ PROCESS_THREAD(udp_client_process, ev, data)
     etimer_set(&periodic_timer, SEND_INTERVAL
       - CLOCK_SECOND + (random_rand() % (2 * CLOCK_SECOND)));
   }
+
+  cc2420_off(); // MAYBE TURN OFF AND ON WILL SAVE POWER
 
   PROCESS_END();
 }
