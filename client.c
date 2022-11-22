@@ -25,12 +25,6 @@
 static struct simple_udp_connection udp_conn;
 static uint32_t rx_count = 0;
 
-//unsigned char message[AES_128_BLOCK_SIZE] = "this is a test 1";
-uint8_t key[AES_128_KEY_LENGTH] = {5, 0, 7, 6, 9, 9, 6, 2, 9, 1, 3, 8, 6, 8, 4, 0};
-uint8_t light_data[AES_128_BLOCK_SIZE];
-
-//char* message = "d9 c9 20 63 38 d5 22 28 7c 2c 12 ec 5a 64 8d d8";
-
 /*---------------------------------------------------------------------------*/
 PROCESS(udp_client_process, "UDP client");
 AUTOSTART_PROCESSES(&udp_client_process);
@@ -62,7 +56,13 @@ PROCESS_THREAD(udp_client_process, ev, data)
   static uint32_t tx_count;
   static uint32_t missed_tx_count;
 
+  uint8_t key[AES_128_KEY_LENGTH] = {5, 0, 7, 6, 9, 9, 6, 2, 9, 1, 3, 8, 6, 8, 4, 0};
+  uint8_t light_data[AES_128_BLOCK_SIZE];
+  static struct etimer timer;
+
   PROCESS_BEGIN();
+
+  etimer_ser(&timer, CLOCK_SECOND * 0.01)
 
   AES_128.set_key(key);
 
@@ -82,21 +82,23 @@ PROCESS_THREAD(udp_client_process, ev, data)
         LOG_INFO("Tx/Rx/MissedTx: %" PRIu32 "/%" PRIu32 "/%" PRIu32 "\n",
                  tx_count, rx_count, missed_tx_count);
       }
-
       
       SENSORS_ACTIVATE(light_sensor); // ACTIVATING LIGHT SENSOR
 
       for (int i = 0; i < AES_128_BLOCK_SIZE; i++) {
         light_data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
+        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
+        etimer_reset(&timer);
       }
 
-      LOG_INFO_("Light Sensor Data: ");
+      SENSORS_DEACTIVATE(light_sensor);
+
+      LOG_INFO("Light Sensor Data: ");
       for (int i = 0; i < AES_128_BLOCK_SIZE; i++) {
+
         LOG_INFO_("%d ", light_data[i]);
       }
       LOG_INFO_("\n");
-
-      SENSORS_DEACTIVATE(light_sensor);
 
       AES_128.encrypt(light_data);
 
