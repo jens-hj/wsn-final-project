@@ -10,6 +10,7 @@
 #include "lib/aes-128.h"
 #include "dev/radio.h"
 #include "cc2420.h"
+#include "dev/sht11/light-sensor.h"
 
 #include "sys/log.h"
 #define LOG_MODULE "App"
@@ -24,8 +25,9 @@
 static struct simple_udp_connection udp_conn;
 static uint32_t rx_count = 0;
 
-unsigned char message[AES_128_BLOCK_SIZE] = "this is a test 1";
+//unsigned char message[AES_128_BLOCK_SIZE] = "this is a test 1";
 uint8_t key[AES_128_KEY_LENGTH] = {5, 0, 7, 6, 9, 9, 6, 2, 9, 1, 3, 8, 6, 8, 4, 0};
+int data[AES_128_BLOCK_SIZE];
 
 //char* message = "d9 c9 20 63 38 d5 22 28 7c 2c 12 ec 5a 64 8d d8";
 
@@ -62,6 +64,8 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
   PROCESS_BEGIN();
 
+  AES_128.set_key(key);
+
   /* Initialize UDP connection */
   simple_udp_register(&udp_conn, UDP_CLIENT_PORT, NULL,
                       UDP_SERVER_PORT, udp_rx_callback);
@@ -79,14 +83,22 @@ PROCESS_THREAD(udp_client_process, ev, data)
                  tx_count, rx_count, missed_tx_count);
       }
 
-      // GET BLOCK OF 16 (32 characters) FROM TXT FILE AND ENCRYPT THEM
-      // THEN SEND THEM
+      
+      SENSORS_ACTIVATE(light_sensor); // ACTIVATING LIGHT SENSOR
 
-      //cc2420_init();
-      //cc2420_on(); // MAYBE TURN OFF AND ON WILL SAVE POWER
-      AES_128.set_key(key);
-      AES_128.encrypt(message);
-      //cc2420_off(); // MAYBE TURN OFF AND ON WILL SAVE POWER
+      for (int i = 0; i < AES_128_BLOCK_SIZE; i++) {
+        data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
+      }
+
+      for (int i = 0; i < datalen; i++) {
+        LOG_INFO_("Light Sensor Data: ")
+        LOG_INFO_("%d ", data[i]);
+      }
+      LOG_INFO_("\n");
+
+      SENSORS_DEACTIVATE(light_sensor);
+
+      AES_128.encrypt(data);
 
       /* Send to DAG root */
       LOG_INFO("Sending request %"PRIu32" to ", tx_count);
@@ -95,7 +107,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
       //snprintf(str, sizeof(str), "hello %" PRIu32 "", tx_count);
       //snprintf(str, sizeof(str), "%s\n", message);
       //simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
-      simple_udp_sendto(&udp_conn, message, sizeof(message)/sizeof(message[0]), &dest_ipaddr);
+      simple_udp_sendto(&udp_conn, message, sizeof(data)/sizeof(data[0]), &dest_ipaddr);
       tx_count++;
     } else {
       LOG_INFO("Not reachable yet\n");
