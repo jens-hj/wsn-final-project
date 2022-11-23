@@ -57,7 +57,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
   uint8_t key[AES_128_KEY_LENGTH] = {5, 0, 7, 6, 9, 9, 6, 2, 9, 1, 3, 8, 6, 8, 4, 0};
   uint8_t light_data[AES_128_BLOCK_SIZE];
-  //static struct etimer timer;
+  static struct etimer timer;
 
   PROCESS_BEGIN();
 
@@ -84,11 +84,12 @@ PROCESS_THREAD(udp_client_process, ev, data)
       
       SENSORS_ACTIVATE(light_sensor); // ACTIVATING LIGHT SENSOR
 
-      
-      for (int i = 0; i < AES_128_BLOCK_SIZE; i++) {
+      static int i;
+      for (i = 0; i < AES_128_BLOCK_SIZE; i++) {
         light_data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
-        //etimer_reset(&timer);
-        //PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
+        etimer_set(&timer, CLOCK_SECOND * 0.1);
+        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
+        etimer_reset(&timer);
       }
       
 
