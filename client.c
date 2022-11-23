@@ -51,18 +51,17 @@ udp_rx_callback(struct simple_udp_connection *c,
 PROCESS_THREAD(udp_client_process, ev, data)
 {
   static struct etimer periodic_timer;
-  //static char str[32];
   uip_ipaddr_t dest_ipaddr;
   static uint32_t tx_count;
   static uint32_t missed_tx_count;
 
   uint8_t key[AES_128_KEY_LENGTH] = {5, 0, 7, 6, 9, 9, 6, 2, 9, 1, 3, 8, 6, 8, 4, 0};
   uint8_t light_data[AES_128_BLOCK_SIZE];
-  //static struct etimer timer;
+  static struct etimer timer;
 
   PROCESS_BEGIN();
 
-  //etimer_set(&timer, CLOCK_SECOND * 0.1);
+  etimer_set(&timer, CLOCK_SECOND * 0.1);
 
   AES_128.set_key(key);
 
@@ -85,26 +84,12 @@ PROCESS_THREAD(udp_client_process, ev, data)
       
       SENSORS_ACTIVATE(light_sensor); // ACTIVATING LIGHT SENSOR
 
-
-      /*
-      int i = 0;
-      while (i < AES_128_BLOCK_SIZE) {
-        light_data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
-        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
-        etimer_reset(&timer);
-        i++;
-      }
-      */
-
       
       for (int i = 0; i < AES_128_BLOCK_SIZE; i++) {
         light_data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
         int n = 0;
-        while(n < 10000) {
-          n++;
-        }
-        //PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
-        //etimer_reset(&timer);
+        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
+        etimer_reset(&timer);
       }
       
 
