@@ -100,7 +100,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
       for (int i = 0; i < AES_128_BLOCK_SIZE; i++) {
         light_data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
         int n = 0;
-        while(n < 100000) {
+        while(n < 10000) {
           n++;
         }
         //PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
