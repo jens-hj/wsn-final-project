@@ -62,7 +62,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
   PROCESS_BEGIN();
 
-  etimer_set(&timer, CLOCK_SECOND * 0.1);
+  //etimer_set(&timer, CLOCK_SECOND * 0.1);
 
   AES_128.set_key(key);
 
@@ -70,7 +70,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
   simple_udp_register(&udp_conn, UDP_CLIENT_PORT, NULL,
                       UDP_SERVER_PORT, udp_rx_callback);
 
-  etimer_set(&periodic_timer, random_rand() % SEND_INTERVAL);
+  //etimer_set(&periodic_timer, random_rand() % SEND_INTERVAL);
   while(1) {
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&periodic_timer));
 
@@ -85,6 +85,8 @@ PROCESS_THREAD(udp_client_process, ev, data)
       
       SENSORS_ACTIVATE(light_sensor); // ACTIVATING LIGHT SENSOR
 
+
+      /*
       int i = 0;
       while (i < AES_128_BLOCK_SIZE) {
         light_data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
@@ -92,14 +94,15 @@ PROCESS_THREAD(udp_client_process, ev, data)
         etimer_reset(&timer);
         i++;
       }
+      */
 
-      /*
+      
       for (int i = 0; i < AES_128_BLOCK_SIZE; i++) {
         light_data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
-        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
-        etimer_reset(&timer);
+        //PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
+        //etimer_reset(&timer);
       }
-      */
+      
 
       LOG_INFO("Light Sensor Data: ");
       for (int j = 0; j < AES_128_BLOCK_SIZE; j++) {
