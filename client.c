@@ -58,7 +58,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
   uint8_t key[AES_128_KEY_LENGTH] = {5, 0, 7, 6, 9, 9, 6, 2, 9, 1, 3, 8, 6, 8, 4, 0};
   uint8_t light_data[AES_128_BLOCK_SIZE];
-  static struct etimer timer;
+  //static struct etimer timer;
 
   PROCESS_BEGIN();
 
