@@ -7,5 +7,7 @@ all: $(CONTIKI_PROJECT)
 # Add project modules
 # MODULES += os/services/simple-energest
 
+WERROR=0
+
 CONTIKI = ../..
 include $(CONTIKI)/Makefile.include
