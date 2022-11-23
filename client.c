@@ -87,9 +87,8 @@ PROCESS_THREAD(udp_client_process, ev, data)
       static int i;
       for (i = 0; i < AES_128_BLOCK_SIZE; i++) {
         light_data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
-        etimer_set(&timer, CLOCK_SECOND * 0.1);
-        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
         etimer_reset(&timer);
+        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
       }
       
 
