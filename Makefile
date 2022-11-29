@@ -5,7 +5,7 @@ all: $(CONTIKI_PROJECT)
 # TARGET_LIBFILES += -lm
 
 # Add project modules
-# MODULES += os/services/simple-energest
+MODULES += os/services/simple-energest
 
 CONTIKI = ../..
 include $(CONTIKI)/Makefile.include
