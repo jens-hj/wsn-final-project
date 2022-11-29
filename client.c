@@ -86,24 +86,12 @@ PROCESS_THREAD(udp_client_process, ev, data)
       
       SENSORS_ACTIVATE(light_sensor); // ACTIVATING LIGHT SENSOR
 
-
-      /*
-      int i = 0;
-      while (i < AES_128_BLOCK_SIZE) {
-        light_data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
-        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
-        etimer_reset(&timer);
-        i++;
-      }
-      */
-
       static int i;
 
       for (i = 0; i < AES_128_BLOCK_SIZE; i++) {
         light_data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
-        //etimer_reset(&timer);
-        //PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
-
+        etimer_reset(&timer);
+        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
       }
       
 
@@ -122,9 +110,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
       LOG_INFO("Sending request %"PRIu32" to ", tx_count);
       LOG_INFO_6ADDR(&dest_ipaddr);
       LOG_INFO_("\n");
-      //snprintf(str, sizeof(str), "hello %" PRIu32 "", tx_count);
-      //snprintf(str, sizeof(str), "%s\n", message);
-      //simple_udp_sendto(&udp_conn, str, strlen(str), &dest_ipaddr);
+
       simple_udp_sendto(&udp_conn, light_data, sizeof(light_data)/sizeof(light_data[0]), &dest_ipaddr);
       tx_count++;
     } else {
