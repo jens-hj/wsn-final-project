@@ -7,6 +7,8 @@
 #include <inttypes.h>
 #include <stdio.h>
 
+#include "dev/radio.h"
+#include "sys/energest.h"
 #include "lib/aes-128.h"
 #include "dev/radio.h"
 #include "cc2420.h"
@@ -20,7 +22,7 @@
 #define UDP_CLIENT_PORT	8765
 #define UDP_SERVER_PORT	5678
 
-#define SEND_INTERVAL		  (5 * CLOCK_SECOND)
+#define SEND_INTERVAL		  (0.5 * CLOCK_SECOND)
 
 static struct simple_udp_connection udp_conn;
 static uint32_t rx_count = 0;
@@ -48,8 +50,13 @@ udp_rx_callback(struct simple_udp_connection *c,
   rx_count++;
 }
 /*---------------------------------------------------------------------------*/
-PROCESS_THREAD(udp_client_process, ev, data)
-{
+PROCESS_THREAD(udp_client_process, ev, data) {
+  energest_init();
+  energest_flush();
+
+  cc2420_init();
+  cc2420_on();
+
   static struct etimer periodic_timer;
   //static char str[32];
   uip_ipaddr_t dest_ipaddr;
@@ -63,7 +70,6 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
   PROCESS_BEGIN();
   etimer_set(&timer, CLOCK_SECOND * 0.1);
-
 
   AES_128.set_key(key);
 
@@ -124,6 +130,33 @@ PROCESS_THREAD(udp_client_process, ev, data)
     etimer_set(&periodic_timer, SEND_INTERVAL
       - CLOCK_SECOND + (random_rand() % (2 * CLOCK_SECOND)));
   }
+
+  cc2420_off();
+
+  // ENERGEST
+
+  // print the ticks per second for energest and statistics
+  // slide 31-32, lecture 2
+  LOG_INFO("Energest ticks per second: %u\n", ENERGEST_SECOND);
+  energest_flush();
+
+  // print the energest values separately
+  unsigned long int cpu_time = energest_type_time(ENERGEST_TYPE_CPU);
+  unsigned long int lpm_time = energest_type_time(ENERGEST_TYPE_LPM);
+  unsigned long int deep_lpm_time = energest_type_time(ENERGEST_TYPE_DEEP_LPM);
+  unsigned long int rx_time = energest_type_time(ENERGEST_TYPE_LISTEN);
+  unsigned long int tx_time = energest_type_time(ENERGEST_TYPE_TRANSMIT);
+  uint64_t total_time = ENERGEST_GET_TOTAL_TIME();
+  // unsigned long int current_time = energest_type_time(ENERGEST_TYPE_MAX);
+  
+  // print
+  LOG_INFO("ENERGEST: CPU time: %lu\n", cpu_time);
+  LOG_INFO("LPM time: %lu\n", lpm_time);
+  LOG_INFO("Deep LPM time: %lu\n", deep_lpm_time);
+  LOG_INFO("RX time: %lu\n", rx_time);
+  LOG_INFO("TX time: %lu\n", tx_time);
+  LOG_INFO("Total time: %llu\n", total_time);
+  // printf("Current time: %lu", current_time);
 
   PROCESS_END();
 }
