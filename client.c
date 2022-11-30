@@ -154,6 +154,8 @@ PROCESS_THREAD(udp_client_process, ev, data) {
 
   //cc2420_off();
 
+  NETSTACK_RADIO.off();
+
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
