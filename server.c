@@ -75,6 +75,8 @@ PROCESS_THREAD(udp_server_process, ev, data)
 {
   PROCESS_BEGIN();
 
+  NETSTACK_RADIO.on();
+
   /* Initialize DAG root */
   NETSTACK_ROUTING.root_start();
 
