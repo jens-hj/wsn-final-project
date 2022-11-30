@@ -54,8 +54,8 @@ PROCESS_THREAD(udp_client_process, ev, data) {
   energest_init();
   energest_flush();
 
-  cc2420_init();
-  cc2420_on();
+  //cc2420_init();
+  //cc2420_on();
 
   static struct etimer periodic_timer;
   //static char str[32];
@@ -78,6 +78,10 @@ PROCESS_THREAD(udp_client_process, ev, data) {
                       UDP_SERVER_PORT, udp_rx_callback);
 
   etimer_set(&periodic_timer, random_rand() % SEND_INTERVAL);
+
+  // TEST
+  NETSTACK_RADIO.on();
+
   while(1) {
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&periodic_timer));
 
@@ -88,29 +92,46 @@ PROCESS_THREAD(udp_client_process, ev, data) {
       if(tx_count % 10 == 0) {
         LOG_INFO("Tx/Rx/MissedTx: %" PRIu32 "/%" PRIu32 "/%" PRIu32 "\n",
                  tx_count, rx_count, missed_tx_count);
+        // ENERGEST EVERY 10 SEND
+        // print the ticks per second for energest and statistics
+        // slide 31-32, lecture 2
+        LOG_INFO("Energest ticks per second: %u\n", ENERGEST_SECOND);
+        energest_flush();
+        // print the energest values separately
+        unsigned long int cpu_time = energest_type_time(ENERGEST_TYPE_CPU);
+        unsigned long int lpm_time = energest_type_time(ENERGEST_TYPE_LPM);
+        unsigned long int deep_lpm_time = energest_type_time(ENERGEST_TYPE_DEEP_LPM);
+        unsigned long int rx_time = energest_type_time(ENERGEST_TYPE_LISTEN);
+        unsigned long int tx_time = energest_type_time(ENERGEST_TYPE_TRANSMIT);
+        uint64_t total_time = ENERGEST_GET_TOTAL_TIME();
+        // unsigned long int current_time = energest_type_time(ENERGEST_TYPE_MAX);
+        // print
+        LOG_INFO("ENERGEST: CPU time: %lu\n", cpu_time);
+        LOG_INFO("LPM time: %lu\n", lpm_time);
+        LOG_INFO("Deep LPM time: %lu\n", deep_lpm_time);
+        LOG_INFO("RX time: %lu\n", rx_time);
+        LOG_INFO("TX time: %lu\n", tx_time);
+        LOG_INFO("Total time: %llu\n", total_time);
+        // printf("Current time: %lu", current_time);
       }
       
       SENSORS_ACTIVATE(light_sensor); // ACTIVATING LIGHT SENSOR
-
       static int i;
-
       for (i = 0; i < AES_128_BLOCK_SIZE; i++) {
         light_data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
         etimer_reset(&timer);
         PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
       }
-      
-
       LOG_INFO("Light Sensor Data: ");
       for (int j = 0; j < AES_128_BLOCK_SIZE; j++) {
-
         LOG_INFO_("%d ", light_data[j]);
       }
       LOG_INFO_("\n");
-
       SENSORS_DEACTIVATE(light_sensor);
 
+
       AES_128.encrypt(light_data);
+
 
       /* Send to DAG root */
       LOG_INFO("Sending request %"PRIu32" to ", tx_count);
@@ -131,32 +152,7 @@ PROCESS_THREAD(udp_client_process, ev, data) {
       - CLOCK_SECOND + (random_rand() % (2 * CLOCK_SECOND)));
   }
 
-  cc2420_off();
-
-  // ENERGEST
-
-  // print the ticks per second for energest and statistics
-  // slide 31-32, lecture 2
-  LOG_INFO("Energest ticks per second: %u\n", ENERGEST_SECOND);
-  energest_flush();
-
-  // print the energest values separately
-  unsigned long int cpu_time = energest_type_time(ENERGEST_TYPE_CPU);
-  unsigned long int lpm_time = energest_type_time(ENERGEST_TYPE_LPM);
-  unsigned long int deep_lpm_time = energest_type_time(ENERGEST_TYPE_DEEP_LPM);
-  unsigned long int rx_time = energest_type_time(ENERGEST_TYPE_LISTEN);
-  unsigned long int tx_time = energest_type_time(ENERGEST_TYPE_TRANSMIT);
-  uint64_t total_time = ENERGEST_GET_TOTAL_TIME();
-  // unsigned long int current_time = energest_type_time(ENERGEST_TYPE_MAX);
-  
-  // print
-  LOG_INFO("ENERGEST: CPU time: %lu\n", cpu_time);
-  LOG_INFO("LPM time: %lu\n", lpm_time);
-  LOG_INFO("Deep LPM time: %lu\n", deep_lpm_time);
-  LOG_INFO("RX time: %lu\n", rx_time);
-  LOG_INFO("TX time: %lu\n", tx_time);
-  LOG_INFO("Total time: %llu\n", total_time);
-  // printf("Current time: %lu", current_time);
+  //cc2420_off();
 
   PROCESS_END();
 }
