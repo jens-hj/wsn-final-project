@@ -1,4 +1,5 @@
 # CONTIKI_PROJECT = aes
+# CONTIKI_PROJECT = client aes server
 CONTIKI_PROJECT = client
 all: $(CONTIKI_PROJECT)
 
@@ -6,7 +7,8 @@ all: $(CONTIKI_PROJECT)
 # TARGET_LIBFILES += -lm
 
 # Add project modules
-MODULES += os/services/simple-energest
+include $(CONTIKI)/Makefile.dir-variables
+# MODULES += $(CONTIKI_NG_SERVICES_DIR)/simple-energest
 
 CONTIKI = ../..
 include $(CONTIKI)/Makefile.include
