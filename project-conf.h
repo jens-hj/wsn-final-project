@@ -10,13 +10,13 @@
 
 // If all flags, full energy will be measured
 // If specific time and energy flag, nothing will be measured
-#define SINGLE_MOTE_TESTING
+// #define SINGLE_MOTE_TESTING
 #define MEASURE_ENERGY_FULL
 
 // #define MEASURE_TIME_SENSOR
-#define MEASURE_ENERGY_SENSOR
+// #define MEASURE_ENERGY_SENSOR
 
-// #define ENCRYPT_WITH_AES
+#define ENCRYPT_WITH_AES
 // #define MEASURE_TIME_AES
 // #define MEASURE_ENERGY_AES
 
