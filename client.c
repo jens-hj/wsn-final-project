@@ -163,7 +163,7 @@ PROCESS_THREAD(udp_client_process, ev, data) {
       static int i;
       for (i = 0; i < AES_128_BLOCK_SIZE; i++) {
         light_data[i] = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
-        RTIMER_BUSYWAIT(2);
+        RTIMER_BUSYWAIT(2); // Waiting 2 ticks 2/32768 seconds
       }
       SENSORS_DEACTIVATE(light_sensor); // DEACTIVATING LIGHT SENSOR
 #if defined MEASURE_TIME_SENSOR && !defined MEASURE_ENERGY_SENSOR && !defined MEASURE_ENERGY_FULL
