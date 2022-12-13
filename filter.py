@@ -9,7 +9,7 @@ def is_hex(s):
     return bool(re.match(r'^\s*".*"\s*$'))
 
 def remove_quotes_and_last_space(s):
-    return s[1:-2]
+    return s[1:-1]
 
 def main():
 
@@ -19,28 +19,32 @@ def main():
     # if arg is filename then read file and apply decrypt to each line
     if arg.endswith('.txt'):
         with open(arg) as f:
-            content = f.readlines()
+            file_content = f.read()
         
-        # strip '\n'
-        lines = [line.strip() for line in content]
+            # strip '\n'
+            # lines = [line.strip() for line in content]
 
-        regex = re.compile(r'^\s*".*"\s*$')
-        # regex2 = re.compile(r'"[0-9a-fA-F]+"')
+            regex = re.compile(r'".*"')
+            # regex2 = re.compile(r'"[0-9a-fA-F]+"')
 
-        # Filter the input list for strings containing hexadecimal numbers
-        filtered_list = [item for item in lines if regex.search(item)]
+            # Filter the input list for strings containing hexadecimal numbers
+            filtered_list = regex.findall(file_content, re.DOTALL)
 
-        # Filter citation marks
-        output_list = [remove_quotes_and_last_space(s) for s in filtered_list]
+            # Strip the quotation marks
+            for i in range(len(filtered_list)):
+                filtered_list[i] = filtered_list[i].strip()
 
-        # create output file
-        arg_split = arg.rsplit('.', 1)
-        new_file = arg_split[0] + "_filtered.txt"
-        f = open(new_file, "w")
+            # Filter citation marks
+            output_list = [remove_quotes_and_last_space(s) for s in filtered_list]
 
-        # decrypt lines and append to output file
-        for line in output_list:
-            f.write(line + '\n')
+            # create output file
+            arg_split = arg.rsplit('.', 1)
+            new_file = arg_split[0] + "_filtered.txt"
+            f = open(new_file, "w")
+
+            # decrypt lines and append to output file
+            for line in output_list:
+                f.write(line + '\n')
 
 if __name__ == "__main__":
     main()

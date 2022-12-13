@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include <assert.h>
 
-
 #include "contiki.h"
 #include "net/routing/routing.h"
 #include "random.h"
@@ -81,7 +80,7 @@ static void udp_rx_callback(struct simple_udp_connection *c,
                             uint16_t receiver_port,
                             const uint8_t *data,
                             uint16_t datalen) {
-  LOG_INFO("Received response '%.*s' from ", datalen, (char *) data);
+  // LOG_INFO("Received response '%.*s' from ", datalen, (char *) data);
   LOG_INFO_6ADDR(sender_addr);
 #if LLSEC802154_CONF_ENABLED
   LOG_INFO_(" LLSEC LV:%d", uipbuf_get_attr(UIPBUF_ATTR_LLSEC_LEVEL));
@@ -176,19 +175,19 @@ PROCESS_THREAD(udp_client_process, ev, data) {
       LOG_INFO("Sensor energy:\n");
       custom_energest_step();
 #endif
-      LOG_INFO_("\"");
-      LOG_INFO("Light Sensor Data: ");
-      for (int j = 0; j < AES_128_BLOCK_SIZE; j++) {
-        LOG_INFO_("%d ", light_data[j]);
-      }
-      LOG_INFO_("\"\n");
+      // LOG_INFO("Light Sensor Data: ");
+      // LOG_INFO_("\"");
+      // for (int j = 0; j < AES_128_BLOCK_SIZE; j++) {
+      //   LOG_INFO_("%02x ", light_data[j]);
+      // }
+      // LOG_INFO_("\"\n");
 
-      /* LOG_INFO("Before");
-      for (int i = 0; i < AES_128_BLOCK_SIZE; i++) {
-        // LOG_INFO_(" %02x", light_data[i]);
-        LOG_INFO_(" %d", light_data[i]);
-      }
-      LOG_INFO_("\n"); */
+      // LOG_INFO("Before");
+      // for (int i = 0; i < AES_128_BLOCK_SIZE; i++) {
+      //   // LOG_INFO_(" %02x", light_data[i]);
+      //   LOG_INFO_(" %d", light_data[i]);
+      // }
+      // LOG_INFO_("\n");
 
 #if defined MEASURE_TIME_AES && defined ENCRYPT_WITH_AES && !defined MEASURE_ENERGY_AES && !defined MEASURE_ENERGY_FULL 
 //#if defined MEASURE_TIME_AES
@@ -203,7 +202,6 @@ PROCESS_THREAD(udp_client_process, ev, data) {
 #endif
 
 #if defined MEASURE_TIME_AES && defined ENCRYPT_WITH_AES && !defined MEASURE_ENERGY_AES && !defined MEASURE_ENERGY_FULL
-//#if defined MEASURE_TIME_AES
       int end_time_aes = RTIMER_NOW();
       int delta_time_aes = end_time_aes - start_time_aes;
       delta_time_aes = delta_time_aes < 0 ? delta_time_aes * -1 : delta_time_aes;
@@ -217,12 +215,13 @@ PROCESS_THREAD(udp_client_process, ev, data) {
       LOG_INFO_6ADDR(&dest_ipaddr);
       LOG_INFO_("\n");
       
-      /* LOG_INFO("with");
+      LOG_INFO("with");
+      LOG_INFO_("\"");
       for (int i = 0; i < AES_128_BLOCK_SIZE; i++) {
-        // LOG_INFO_(" %02x", light_data[i]);
-        LOG_INFO_(" %d", light_data[i]);
+        LOG_INFO_(" %02x", light_data[i]);
+        // LOG_INFO_(" %d", light_data[i]);
       }
-      LOG_INFO_("\n"); */
+      LOG_INFO_("\"\n");
 
 #if defined MEASURE_TIME_TX && !defined MEASURE_ENERGY_TX && !defined MEASURE_ENERGY_FULL
       static int start_time_tx;
