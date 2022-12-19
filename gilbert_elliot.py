@@ -32,23 +32,23 @@ elif E == "e3":
 # Bad state  : "b"
 state = "G"
 
-# Initialize packet size
-packet_size = 376
+# Initialize packet size and counts
+bit_count = 0
+packet_size = 265
 packet_count = 0
 packet_errors = 0
+packet_retransmissions = 0
 packet_list = []
 
-# Initialize count
-count = 0
-
 # Initialize number of steps to simulate
+steps = 0
 bits = 500000
 
 # Initialize number of errors to 0
 errors = 0
 
 # Simulate transmissions
-for i in range(bits):
+while steps < bits:
 
     # If state is good, determine if it transitions to bad
     if state == "G":
@@ -70,20 +70,29 @@ for i in range(bits):
             packet_errors += 1
 
     # Count packets
-    if count == packet_size:
+    if bit_count == packet_size:
+
+        # Re-transmit if there's more than 2 bit errors in packet
+        if packet_errors >= 2:
+            packet_retransmissions += 1
+            steps -= packet_size
+
         # Add packet errors to packet list
         packet_list.append(packet_errors)
         packet_count += 1
 
         # Reset counts
         packet_errors = 0
-        count = 0
+        bit_count = 0
 
-    count += 1
+    bit_count += 1
+    steps += 1
 
 # Print packets
 print(f"Packets transmitted: {packet_count}")
 
+# Print packets retransmitted:
+print(f"Packets re-transmitted: {packet_retransmissions}")
 
 # Print packets
 print(f"Packets with errors = 0: {packet_list.count(0)}")
@@ -98,18 +107,3 @@ print(f"Errors/packets: {errors}/{bits}")
 
 # Print the error rate
 print(f"Error rate: {errors / bits:.6f}")
-
-# Plotting
-
-# Center x-axis
-data = np.array(packet_list)
-d = np.diff(np.unique(data)).min()
-left_of_first_bin = data.min() - float(d)/2
-right_of_last_bin = data.max() + float(d)/2
-range = range(math.floor(min(packet_list)), math.ceil(max(packet_list))+1)
-plt.xticks(range)
-
-# Plot histogram
-counts, edges, bars = plt.hist(data, np.arange(left_of_first_bin, right_of_last_bin + d, d), color = "red", ec='black')
-plt.bar_label(bars)
-plt.show()
