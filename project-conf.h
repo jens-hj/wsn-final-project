@@ -5,8 +5,8 @@
 // #define RADIO radio_driver
 
 // Energest energy estimation module
-#define ENERGEST_CONF_ON 1
-#define SIMPLE_ENERGEST_CONF_PERIOD (10 * CLOCK_SECOND)
+// #define ENERGEST_CONF_ON 1
+// #define SIMPLE_ENERGEST_CONF_PERIOD (10 * CLOCK_SECOND)
 
 // If all flags, full energy will be measured
 // If specific time and energy flag, nothing will be measured
