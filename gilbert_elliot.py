@@ -90,9 +90,10 @@ while steps < bits:
 
 # Print packets
 print(f"Packets transmitted: {packet_count}")
-
 # Print packets retransmitted:
 print(f"Packets re-transmitted: {packet_retransmissions}")
+# Print packets retransmitted:
+print(f"Transmission success rate: {packet_count/packet_retransmissions}")
 
 # Print packets
 print(f"Packets with errors = 0: {packet_list.count(0)}")
@@ -101,9 +102,7 @@ print(f"Packets with errors >= 2: {len([x for x in packet_list if x >= 2])}")
 
 # Print bits transmitted
 print(f"Bits transmitted: {bits-errors}/{bits}")
-
 # Print total errors and transmissions
 print(f"Errors/packets: {errors}/{bits}")
-
 # Print the error rate
 print(f"Error rate: {errors / bits:.6f}")
